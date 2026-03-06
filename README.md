@@ -1,11 +1,11 @@
 # Reolink Firmware Security & Connectivity Analysis
 
-Automated security analysis of **89 firmware images** across the entire Reolink product line,
+Automated security analysis of **90 firmware images** across the entire Reolink product line,
 covering cameras (IPC), NVRs, home hubs, doorbells, and fisheye devices.
 
 ## Summary
 
-- **89 hardware versions** analyzed from latest available firmware
+- **90 hardware versions** analyzed from latest available firmware
 - **9 hardware versions** could not be extracted (cramfs/old formats)
 - **4 unique root password hashes** found across all devices
 - **Zero devices** use `/etc/shadow` properly (only 7 have shadow files)
@@ -70,6 +70,7 @@ covering cameras (IPC), NVRs, home hubs, doorbells, and fisheye devices.
 | [P430](models/P430_IPC_560B158MP.md) | IPC_560B158MP | v3.1.0.4695_2504301441 | ARM | 4.19.91 | 1.31.1 | - | 1.14.2 | `5p6FGL0H1INXw` |
 | [RLC-1212A](models/RLC-1212A_IPC_523B18128M12MP.md) | IPC_523B18128M12MP | v3.1.0.5036_2509040629 | ARM | 4.19.91 | 1.24.1 | - | 1.14.2 | `5p6FGL0H1INXw` |
 | [RLC-1220A](models/RLC-1220A_IPC_523128M12MP.md) | IPC_523128M12MP | v3.1.0.861_24022105 | ARM | 4.19.91 | 1.24.1 | 1.0.2f | 1.14.2 | `XF4sg5T82tV4k` |
+| [RLC-1224A](models/RLC-1224A_IPC_523D8128M12MP.md) | IPC_523D8128M12MP | v3.1.0.2174_23050816 | ARM | 4.19.91 | 1.24.1 | 1.0.2f | 1.14.2 | `XF4sg5T82tV4k` |
 | [RLC-1240A](models/RLC-1240A_IPC_NT18NA612MPD11.md) | IPC_NT18NA612MPD11 | v3.2.0.5758_2512031764 | AArch64 | 5.10.168 | 1.36.0 | - | - | `aRDwnwAt1ygAM` |
 | [RLC-410](models/RLC-410_IPC_51316M.md) | IPC_51316M | v3.0.0.2356_23062000 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | 1.14.2 | *(empty)* |
 | [RLC-410-5MP](models/RLC-410-5MP_IPC_51516M5M.md) | IPC_51516M5M | v3.0.0.2356_23062000 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | 1.14.2 | *(empty)* |
@@ -112,13 +113,13 @@ These issues are present in **every firmware analyzed**:
 
 | Vulnerability | Severity | Details |
 |---------------|----------|---------|
-| Hardcoded root password | Critical | DES hash in `/etc/passwd`, no `/etc/shadow`. Only 4 unique hashes across all 89 models |
+| Hardcoded root password | Critical | DES hash in `/etc/passwd`, no `/etc/shadow`. Only 4 unique hashes across all 90 models |
 | Shared TLS private key | Critical | Same certificate baked into firmware for entire product lines. 4 unique certs across 53 models |
 | No firmware signature verification | Critical | Only CRC32 + MD5 integrity checks. Any modified firmware can be flashed |
 | Everything runs as root | Critical | nginx, RTSP server, device manager. all run as UID 0, no privilege separation |
 | Command injection vectors | Critical | `system()` calls with user input in smbpasswd, resolv.conf, ddns-config, ifconfig |
-| Super password bypass | High | `support_supper_pwd="1"` in 58/89 models. factory backdoor password |
-| Amcrest/Dahua code sharing | Medium | `AmcrestToken` found in 38/89 models. Shared OEM codebase |
+| Super password bypass | High | `support_supper_pwd="1"` in 58/90 models. factory backdoor password |
+| Amcrest/Dahua code sharing | Medium | `AmcrestToken` found in 39/90 models. Shared OEM codebase |
 | Core dumps enabled | Medium | `ulimit -c unlimited` in 4 models. Memory contents written to disk |
 | Developer build paths | Low | Compiler paths like `/home/username/project/` leaked in binaries |
 
@@ -158,7 +159,7 @@ Only the newest AArch64 and MediaTek-based platforms use the 5.10 LTS kernel.
 
 | Version | Status | Models |
 |---------|--------|--------|
-| OpenSSL 1.0.2f | **EOL since 2020. CRITICAL** | 23 |
+| OpenSSL 1.0.2f | **EOL since 2020. CRITICAL** | 24 |
 | not found | Uses Mbed TLS or statically linked | 66 |
 
 ## nginx Versions
@@ -242,9 +243,9 @@ Firmware metadata sourced from [AT0myks/reolink-fw-archive](https://github.com/A
 
 ## Key Findings
 
-1. **Shared secrets at scale**: Only 4 root passwords and 4 TLS certificates protect 89 distinct hardware versions. Compromising one device gives credentials for dozens of models.
+1. **Shared secrets at scale**: Only 4 root passwords and 4 TLS certificates protect 90 distinct hardware versions. Compromising one device gives credentials for dozens of models.
 2. **No firmware signing**: Any attacker with network access can push malicious firmware. The OTA update mechanism uses only CRC32/MD5 integrity checks.
-3. **Legacy libraries**: 23 models still ship OpenSSL 1.0.2f (EOL 2020), exposing them to years of known vulnerabilities.
+3. **Legacy libraries**: 24 models still ship OpenSSL 1.0.2f (EOL 2020), exposing them to years of known vulnerabilities.
 4. **Universal root**: Every process runs as root. A single vulnerability in nginx, RTSP, or any network service gives full device control.
 5. **OEM code sharing**: Amcrest/Dahua tokens in 38 models suggest shared IP camera firmware ancestry, meaning vulnerabilities may affect multiple brands.
 
