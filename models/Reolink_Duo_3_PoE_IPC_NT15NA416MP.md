@@ -295,18 +295,3 @@ The most dangerous attack chain combines these findings:
 3. **Web exploitation**: Potential command injection in CGI handlers provides a remote code execution path
 4. **Full control**: Everything runs as root with no privilege separation. Any single exploit gives complete device control
 
----
-
-## Recommendations
-
-1. Generate unique TLS keys per device during first boot
-2. Implement cryptographic firmware signature verification (RSA/ECDSA)
-3. Drop root privileges for nginx and application daemons
-4. Add `/etc/shadow` with proper permissions and use a strong hash algorithm (SHA-512)
-5. Sanitize all user input before passing to shell commands
-6. Implement privilege separation (run services as non-root users)
-7. Disable core dumps in production builds
-8. Remove debug message types from production firmware
-9. Enable HSTS and add TLS 1.3 support
-10. Use HTTPS for all DDNS update requests
-11. Remove the `eval()` call in the web UI
