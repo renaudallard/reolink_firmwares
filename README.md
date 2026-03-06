@@ -1,3 +1,14 @@
+# Reolink Firmware Security & Connectivity Analysis
+
+## Analyzed Firmwares
+
+| Model | Firmware | Analysis |
+|-------|----------|----------|
+| Reolink Duo 3 PoE | v3.0.0.5049_2506302188 (2025-06-30) | [Below](#reolink-duo-3-poe) |
+| Reolink RLC-1224A | v3.1.0.2174_23050816 (2023-05-08) | [RLC-1224A-analysis.md](RLC-1224A-analysis.md) |
+
+---
+
 # Reolink Duo 3 PoE Firmware Security & Connectivity Analysis
 
 **Firmware**: v3.0.0.5049_2506302188 (built 2025-06-30)
