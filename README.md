@@ -1,11 +1,11 @@
 # Reolink Firmware Security & Connectivity Analysis
 
-Automated security analysis of **90 firmware images** across the entire Reolink product line,
+Automated security analysis of **91 firmware images** across the entire Reolink product line,
 covering cameras (IPC), NVRs, home hubs, doorbells, and fisheye devices.
 
 ## Summary
 
-- **90 hardware versions** analyzed from latest available firmware
+- **91 hardware versions** analyzed from latest available firmware
 - **9 hardware versions** could not be extracted (cramfs/old formats)
 - **4 unique root password hashes** found across all devices
 - **Zero devices** use `/etc/shadow` properly (only 7 have shadow files)
@@ -50,6 +50,7 @@ covering cameras (IPC), NVRs, home hubs, doorbells, and fisheye devices.
 | [E1 Outdoor Pro](models/E1_Outdoor_Pro_IPC_560SD88MPW.md) | IPC_560SD88MPW | v3.1.0.5714_2511271366 | ARM | 4.19.91 | 1.31.1 | - | - | `5p6FGL0H1INXw` |
 | [E1 Pro](models/E1_Pro_IPC_513SD5.md) | IPC_513SD5 | v3.0.0.2356_23062004 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | - | *(empty)* |
 | [E1 Pro](models/E1_Pro_IPC_515SD5.md) | IPC_515SD5 | v3.0.0.2356_23062013 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | - | *(empty)* |
+| [E1 Pro](models/E1_Pro_IPC_NT1NA45MP.md) | IPC_NT1NA45MP | v3.1.0.4417_2412122130 | ARM | 4.19.91 | 1.31.1 | 3.3.2 | 1.14.2 | `XF4sg5T82tV4k` |
 | [E1 Zoom](models/E1_Zoom_IPC_515BSD6.md) | IPC_515BSD6 | v3.0.0.2356_23062008 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | 1.14.2 | *(empty)* |
 | [E1 Zoom](models/E1_Zoom_IPC_515SD6.md) | IPC_515SD6 | v3.0.0.2356 | MIPS | 4.1.0 | 1.24.1 | 1.0.2f | 1.14.2 | *(empty)* |
 | [E1 Zoom](models/E1_Zoom_IPC_566SD65MP.md) | IPC_566SD65MP | v3.1.0.3382_2404177933 | ARM | 4.19.91 | 1.31.1 | 1.0.2f | 1.14.2 | `XF4sg5T82tV4k` |
@@ -113,24 +114,24 @@ These issues are present in **every firmware analyzed**:
 
 | Vulnerability | Severity | Details |
 |---------------|----------|---------|
-| Hardcoded root password | Critical | DES hash in `/etc/passwd`, no `/etc/shadow`. Only 4 unique hashes across all 90 models |
-| Shared TLS private key | Critical | Same certificate baked into firmware for entire product lines. 4 unique certs across 53 models |
+| Hardcoded root password | Critical | DES hash in `/etc/passwd`, no `/etc/shadow`. Only 4 unique hashes across all 91 models |
+| Shared TLS private key | Critical | Same certificate baked into firmware for entire product lines. 4 unique certs across 54 models |
 | No firmware signature verification | Critical | Only CRC32 + MD5 integrity checks. Any modified firmware can be flashed |
 | Everything runs as root | Critical | nginx, RTSP server, device manager. all run as UID 0, no privilege separation |
 | Command injection vectors | Critical | `system()` calls with user input in smbpasswd, resolv.conf, ddns-config, ifconfig |
-| Super password bypass | High | `support_supper_pwd="1"` in 58/90 models. factory backdoor password |
-| Amcrest/Dahua code sharing | Medium | `AmcrestToken` found in 39/90 models. Shared OEM codebase |
+| Super password bypass | High | `support_supper_pwd="1"` in 59/91 models. factory backdoor password |
+| Amcrest/Dahua code sharing | Medium | `AmcrestToken` found in 40/91 models. Shared OEM codebase |
 | Core dumps enabled | Medium | `ulimit -c unlimited` in 4 models. Memory contents written to disk |
 | Developer build paths | Low | Compiler paths like `/home/username/project/` leaked in binaries |
 
 ## Root Password Hashes
 
-Only 4 unique DES hashes protect root access across 78 models (11 additional models have **no password at all**):
+Only 4 unique DES hashes protect root access across 79 models (11 additional models have **no password at all**):
 
 | Hash | Models Using It | Count |
 |------|----------------|-------|
 | `aRDwnwAt1ygAM` | CX820, D340P, D340P-White, D340W, D340W-White, ... (+25 more) | 30 |
-| `XF4sg5T82tV4k` | ColorX Series W320X, D500, D800, E Series E340, E Series E560, ... (+18 more) | 23 |
+| `XF4sg5T82tV4k` | ColorX Series W320X, D500, D800, E1 Pro, E Series E340, E Series E560, ... (+18 more) | 24 |
 | `5p6FGL0H1INXw` | B1200, ColorX Series P330X, Duo Series P730, E Series E330, E Series E331, ... (+15 more) | 20 |
 | `x` | E Series E530X, W320, W320C, W330, W330C | 5 |
 | *(empty)* | B400, B800, D500, E1, E1 Pro (x2), E1 Zoom (x2), RLC-410, RLC-410-5MP, RLC-410W-5MP | 11 |
@@ -146,13 +147,13 @@ An **empty hash field** means passwordless root login. these 11 MIPS models allo
 | 4.1.0 | **EOL. No security patches since 2018** | 11 |
 | 4.9.84 | EOL. Last 4.9 LTS was 4.9.337 (2023) | 1 |
 | 4.9.118 | EOL. Last 4.9 LTS was 4.9.337 (2023) | 1 |
-| 4.19.91 | EOL. Last 4.19 LTS was 4.19.306 (2024) | 49 |
+| 4.19.91 | EOL. Last 4.19 LTS was 4.19.306 (2024) | 50 |
 | 4.19.148 | EOL. Last 4.19 LTS was 4.19.306 (2024) | 9 |
 | 5.10.61 | LTS (EOL Dec 2026). Current 5.10 is 5.10.238 | 6 |
 | 5.10.168 | LTS (EOL Dec 2026). Current 5.10 is 5.10.238 | 12 |
 | unknown | Extraction failed | 11 |
 
-The majority of devices (61/89) run EOL 4.x kernels that no longer receive security patches.
+The majority of devices (62/90) run EOL 4.x kernels that no longer receive security patches.
 Only the newest AArch64 and MediaTek-based platforms use the 5.10 LTS kernel.
 
 ## OpenSSL Versions
@@ -160,16 +161,17 @@ Only the newest AArch64 and MediaTek-based platforms use the 5.10 LTS kernel.
 | Version | Status | Models |
 |---------|--------|--------|
 | OpenSSL 1.0.2f | **EOL since 2020. CRITICAL** | 24 |
+| OpenSSL 3.3.2 | Current | 1 |
 | not found | Uses Mbed TLS or statically linked | 66 |
 
 ## nginx Versions
 
 | Version | Status | Models |
 |---------|--------|--------|
-| nginx/1.14.2 | **2018, multiple CVEs** | 27 |
+| nginx/1.14.2 | **2018, multiple CVEs** | 28 |
 | nginx/1.22.0 | 2022, older but fewer CVEs | 1 |
 | nginx/1.22.1 | 2022, older but fewer CVEs | 2 |
-| not found | Uses app-integrated web server | 59 |
+| not found | Uses app-integrated web server | 58 |
 
 ## BusyBox Versions & Dangerous Applets
 
@@ -177,7 +179,7 @@ Only the newest AArch64 and MediaTek-based platforms use the 5.10 LTS kernel.
 |---------|--------|-----------------------------|
 | 1.20.2 | 1 | tftp, wget |
 | 1.24.1 | 30 | ftpd, httpd, nc, tftp, wget |
-| 1.31.1 | 44 | tftp, wget |
+| 1.31.1 | 45 | tftp, wget |
 | 1.34.1 | 2 | tftp |
 | 1.36.0 | 12 | httpd, nc, tftp, tftpd, wget |
 
@@ -191,24 +193,24 @@ The private key is extractable from any firmware image, making TLS effectively u
 
 | Key Size | Models |
 |----------|--------|
-| 2048 bit | 47 |
+| 2048 bit | 48 |
 | 4096 bit | 6 |
 | N/A | 36 |
 
-Only **4 unique TLS certificates** across 53 models that have certificates.
+Only **4 unique TLS certificates** across 54 models that have certificates.
 This means many different camera models share the exact same TLS private key.
 
 ## Mbed TLS Versions
 
 | Version | Models |
 |---------|--------|
-| Mbed TLS 2.28.9 | 28 |
+| Mbed TLS 2.28.9 | 29 |
 | mbed TLS 2.24.0 | 17 |
 | not found | 44 |
 
 ## Cloud & Connectivity
 
-- **Cloud enabled**: 35 models
+- **Cloud enabled**: 36 models
 - **Cloud disabled**: 24 models
 - **Unknown/not in dvr.xml**: 30 models
 
@@ -232,6 +234,35 @@ These hardware versions could not be analyzed due to filesystem format limitatio
 | NVS16-S | NVR_NNT4NA716P | ubifs, squashfs | extraction failed |
 
 
+## Tools
+
+### reolink-enc.sh
+
+Set video encoding (H.264/H.265) on Reolink cameras via the HTTP API.
+
+```
+usage: reolink-enc.sh -u user -p pass -h host [-s stream] codec
+  -u user    login username
+  -p pass    login password
+  -h host    camera IP or hostname
+  -s stream  main or sub (default: main)
+  codec      h264 or h265
+```
+
+Only works on models where `encoder_select` is not locked (`encoder_select="3"` in `dvr.xml`).
+
+### reolink-patch-enc.sh
+
+Patch Reolink firmware to enable H.264/H.265 codec switching on models where it is locked (`encoder_select="0"` in `dvr.xml`, e.g. E1 Pro IPC_NT1NA45MP).
+
+```
+usage: reolink-patch-enc.sh firmware.pak [output.pak]
+```
+
+Changes `encoder_select="0"` to `encoder_select="3"` in the app partition's `dvr.xml` and repacks the PAK file with updated CRC32. The hardware already supports both codecs (Novatek `kdrv_h26x.ko` kernel modules); this patch only removes the software restriction.
+
+Requires: `pakler`, `ubireader`, `unsquashfs`, `mksquashfs`, `ubinize`
+
 ## Methodology
 
 Each firmware was:
@@ -243,9 +274,9 @@ Firmware metadata sourced from [AT0myks/reolink-fw-archive](https://github.com/A
 
 ## Key Findings
 
-1. **Shared secrets at scale**: Only 4 root passwords and 4 TLS certificates protect 90 distinct hardware versions. Compromising one device gives credentials for dozens of models.
+1. **Shared secrets at scale**: Only 4 root passwords and 4 TLS certificates protect 91 distinct hardware versions. Compromising one device gives credentials for dozens of models.
 2. **No firmware signing**: Any attacker with network access can push malicious firmware. The OTA update mechanism uses only CRC32/MD5 integrity checks.
 3. **Legacy libraries**: 24 models still ship OpenSSL 1.0.2f (EOL 2020), exposing them to years of known vulnerabilities.
 4. **Universal root**: Every process runs as root. A single vulnerability in nginx, RTSP, or any network service gives full device control.
-5. **OEM code sharing**: Amcrest/Dahua tokens in 38 models suggest shared IP camera firmware ancestry, meaning vulnerabilities may affect multiple brands.
+5. **OEM code sharing**: Amcrest/Dahua tokens in 40 models suggest shared IP camera firmware ancestry, meaning vulnerabilities may affect multiple brands.
 
